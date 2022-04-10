@@ -1,0 +1,59 @@
+version: '3.7'
+
+services:
+  # User manager service
+  user-manager:
+    restart: always
+    build:
+      context: ./
+      dockerfile: DockerfileManagerServer
+    ports:
+      - "35307:35307"
+    networks:
+      - rabbitmq_go_net
+    depends_on:
+      - rabbitmq
+
+  # A db processor
+  db-processor:
+    restart: always
+    build:
+      context: ./
+      dockerfile: DockerfileDbProcessor
+    links:
+      - rabbitmq
+      - db
+    networks:
+      - db_net
+      - rabbitmq_go_net
+    depends_on:
+      - db
+      - rabbitmq
+
+  # A containerized rabbitmq
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - rabbitmq_go_net
+
+  # A containerized mysql
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: users3
+    ports:
+      - "3307:3306"
+    networks:
+      - db_net
+
+networks:
+  db_net:
+    driver: bridge
+  rabbitmq_go_net:
+    driver: bridge

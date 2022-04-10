@@ -1,0 +1,14 @@
+
+FROM golang:1.18 as builder
+COPY . /go/src/github.com/n3rdkube/user-manager
+ENV GOPATH=/go
+ENV GO111MODULE=on
+WORKDIR /go/src/github.com/n3rdkube/user-manager
+RUN CGO_ENABLED=0 GOOS=linux go build -o /userManager /go/src/github.com/n3rdkube/user-manager/cmd/user-manager-server/main.go
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+COPY --from=0 /userManager .
+EXPOSE 35307/tcp
+
+CMD ["/userManager"]

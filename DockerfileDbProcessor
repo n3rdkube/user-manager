@@ -1,0 +1,11 @@
+FROM golang:1.18 as builder
+COPY . /go/src/github.com/n3rdkube/user-manager
+ENV GOPATH=/go
+ENV GO111MODULE=on
+WORKDIR /go/src/github.com/n3rdkube/user-manager
+RUN CGO_ENABLED=0 GOOS=linux go build -o /dbProcessor /go/src/github.com/n3rdkube/user-manager/cmd/message-db-processor/main.go
+
+FROM alpine:latest
+COPY --from=0 /dbProcessor .
+
+CMD ["/dbProcessor"]
