@@ -49,7 +49,9 @@ curl -X DELETE "http://[::]:35307/users/f478e0c4-bc9c-11ec-8422-0242ac120002" -H
 
 Run tests
 -
-`make e2e-test` to run the whole e2e suite
+`make e2e-test` to run the whole e2e suite with server, rabbitmq, processor and mysql
+
+`make integration-test` to run integration tests against rabbit mq
 
 `make test` to run unit tests
 

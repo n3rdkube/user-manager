@@ -18,4 +18,10 @@ e2e-test:
 	docker-compose up --build --remove-orphans --force-recreate -d
 	go test -v -tags=e2e ./e2e-tests/...  ; (ret=$$?;  docker-compose down && exit $$ret)
 
+integration-test:
+	echo "[ test ]: running integration tests..."
+	docker-compose up --build --remove-orphans --force-recreate -d rabbitmq
+	go test -v -tags=integration ./internal/messanger/...  ; (ret=$$?;  docker-compose down && exit $$ret)
+
+
 .PHONY: all build validate compile test
